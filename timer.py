@@ -21,8 +21,23 @@
 import sys
 import argparse
 import pygame
+import wave
 from time import sleep
 from os import path
+
+def play_sound(path):
+	# Init the music pygame machine
+	pygame.mixer.quit()
+	if(path.endswith('.wav')):
+		wave_fh = wave.open(path, 'rb')
+		pygame.mixer.init(frequency=wave_fh.getframerate())
+		wave_fh.close()
+	else:
+		pygame.mixer.init()
+	# Load the sound file
+	pygame.mixer.music.load(path)
+	# Play the sound
+	pygame.mixer.music.play()
 
 def main():
 	# Define command line options
@@ -73,8 +88,6 @@ def main():
 			  "repetition count. " + \
 			  "E.g. 1.wav, 2.wav, ..., 12.wav, ..., 42.wav."
 		sys.exit(0)
-	# Init the music pygame machine
-	pygame.mixer.init(frequency=8000)
 
 	# Sleep given time before starting the repetitions
 	sleep(opts.prelude_time)
@@ -83,27 +96,25 @@ def main():
 	# sleeping 'sleep' seconds between repeats.
 	for repeat in range(1, opts.repetitions + 1):
 		try:
-			pygame.mixer.music.load(sound_dir + str(repeat) + sound_postfix)
+			play_sound(sound_dir + str(repeat) + sound_postfix)
 		except pygame.error as e:
 			print "Can't play sound for repetition count. Most likely " + \
 				  "sound file does not exist. Check that directory " + \
 				  "specified by --sound_dir parameter contains properly " + \
-				  "named .wav files for all numbers smaller and equal to " + \
+				  "named sound files for all numbers smaller and equal to " + \
 				  "repetition count. " + \
 				  "E.g. 1.wav, 2.wav, ..., 12.wav, ..., 42.wav."
 			print str(e)
 			sys.exit(0)
-		pygame.mixer.music.play()
 		sleep(opts.duration)
 		try:
-			pygame.mixer.music.load(end_sound)
+			play_sound(end_sound)
 		except pygame.error as e:
 			print "Can't play end sound. Most likely sound file does not " + \
 				  "exist. Check that --end_sound parameter specifies an " + \
 				  "existing sound file."
 			print str(e)
 			sys.exit(0)
-		pygame.mixer.music.play()
 		sleep(opts.sleep)
 
 if __name__ == "__main__":
