@@ -13,10 +13,6 @@
 # For the program to work SOUND_DIR must contain .wav sound files for each
 # number up to the desired number of repetitions. E.g. 1.wav, 2.wav, ...
 # 
-# TBD:
-#	* Find and set correct frequency in pygame.mixer.init
-#		mebbe use pymedia. It can find out about media type, framerates, frequencies and stuff
-#
 
 import sys
 import argparse
@@ -26,7 +22,7 @@ from time import sleep
 from os import path
 
 def play_sound(path):
-	# Init the music pygame machine
+	# Init the pygame mixer
 	pygame.mixer.quit()
 	if(path.endswith('.wav')):
 		wave_fh = wave.open(path, 'rb')
